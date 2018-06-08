@@ -133,3 +133,30 @@ function addInventory() {
         )
     })
 }
+
+function newProduct() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the item you would like to add to the store?",
+            name: "item_name"
+        },
+        {
+            type: "input",
+            message: "Which department would this item fall under?",
+            name: "item_department"
+        },
+        {
+            type: "input",
+            message: "What is this item's price?",
+            name: "item_price"
+        },
+        {
+            type: "input",
+            message: "How many of this item would you like to add to the store?",
+            name: "item_quantity"
+        }
+    ]).then(function (response) {
+        
+    })
+}
