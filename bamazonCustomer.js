@@ -16,15 +16,15 @@ var connection = mysql.createConnection({
     database: "bamazon"
 })
 
-connection.connect(function (err) {
-    if (err) throw err;
+connection.connect(function (error) {
+    if (error) throw error;
     displayProducts();
 });
 
 // Function that will run when the js file is initially run, which will display all products
 function displayProducts() {
-    var query = connection.query("SELECT * FROM products", function (err, result) {
-        if (err) throw err;
+    var query = connection.query("SELECT * FROM products", function (error, result) {
+        if (error) throw error;
 
         console.table(result);
 
@@ -53,8 +53,6 @@ function askCustomer() {
 
 // Function to check the availability of an item
 function checkAvailability(item_id_number, item_quantity) {
-    console.log("Searching for " + item_quantity + " of item ID of " + item_id_number + ".");
-
     // Query to the database using item_id_number & item_quantity variables
     var query = connection.query(
         // Select from the whole products table where item_id equals what the customer wants
@@ -93,6 +91,32 @@ function purchaseItem(result, item_quantity) {
             if (error) throw error;
 
             console.log("You purchased " + item_quantity + " of " + result.product_name + " for a total of $" + (parseInt(item_quantity) * parseFloat(result.price)).toFixed(2) + ".");
+        
+            afterPurchase();
         }
     )
+}
+
+// Function that will ask the customer if they would like to purchase more items
+function afterPurchase() {
+    inquirer.prompt([
+        {
+            type: "list",
+            message: "Would you like to purchase another item?",
+            choices: ["Yes", "No"],
+            name: "action"
+        }
+    ]).then(function (response) {
+        switch (response.action) {
+            case "Yes":
+                askCustomer();
+                break;
+
+            case "No":
+                return;
+                break;
+
+            // No default needed here as it's not possible for the action to be anything but the 4 listed above
+        }
+    });
 }

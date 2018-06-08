@@ -17,8 +17,8 @@ var connection = mysql.createConnection({
 })
 
 // It'll run the askManager function once it connects to the database
-connection.connect(function (err) {
-    if (err) throw err;
+connection.connect(function (error) {
+    if (error) throw error;
     askManager();
 });
 
@@ -78,13 +78,58 @@ function afterAction() {
     });
 }
 
-// Function that will display every product in database with details
+// Function that will display every item in the database with details
 function viewProducts() {
-    var query = connection.query("SELECT * FROM products", function (err, result) {
-        if (err) throw err;
+    var query = connection.query("SELECT * FROM products", function (error, result) {
+        if (error) throw error;
+
+        console.log("\n");
 
         console.table(result);
 
         afterAction();
+    })
+}
+
+// Function that will display all items with an inventory count of lower than 5
+function lowInventory() {
+    var query = connection.query("SELECT * FROM products WHERE stock_quantity < 5", function (error, result) {
+        if (error) throw error;
+
+        console.log("\n");
+
+        console.table(result);
+
+        afterAction();
+    })
+}
+
+// Function that will allow the manager to add stock quantity to existing items in the database
+function addInventory() {
+    // Get the item's ID & the quantity that they would like to add by
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the ID number of the item you would like to add inventory to?",
+            name: "item_id_number"
+        },
+        {
+            type: "input",
+            message: "How many of those would you like to add?",
+            name: "item_quantity"
+        }
+    ]).then(function (response) {
+        // Update the products table in the database
+        var query = connection.query(
+            "UPDATE products SET stock_quantity = stock_quantity + " + response.item_quantity + " WHERE ?",
+            {
+                item_id: response.item_id_number
+            },
+            function (error, response) {
+                if (error) throw error;
+
+                viewProducts();
+            }
+        )
     })
 }
