@@ -21,6 +21,7 @@ connection.connect(function (err) {
     displayProducts();
 });
 
+// Function that will run when the js file is initially run, which will display all products
 function displayProducts() {
     var query = connection.query("SELECT * FROM products", function (err, result) {
         if (err) throw err;
