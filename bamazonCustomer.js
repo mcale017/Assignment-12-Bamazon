@@ -26,6 +26,8 @@ function displayProducts() {
     var query = connection.query("SELECT * FROM products", function (error, result) {
         if (error) throw error;
 
+        console.log("\n");
+
         console.table(result);
 
         askCustomer();
@@ -90,6 +92,8 @@ function purchaseItem(result, item_quantity) {
         function (error, response) {
             if (error) throw error;
 
+            console.log("\n");
+
             console.log("You purchased " + item_quantity + " of " + result.product_name + " for a total of $" + (parseInt(item_quantity) * parseFloat(result.price)).toFixed(2) + ".");
         
             afterPurchase();
@@ -99,6 +103,8 @@ function purchaseItem(result, item_quantity) {
 
 // Function that will ask the customer if they would like to purchase more items
 function afterPurchase() {
+    console.log("\n");
+
     inquirer.prompt([
         {
             type: "list",
@@ -109,7 +115,7 @@ function afterPurchase() {
     ]).then(function (response) {
         switch (response.action) {
             case "Yes":
-                askCustomer();
+                displayProducts();
                 break;
 
             case "No":

@@ -24,6 +24,8 @@ connection.connect(function (error) {
 
 // Function that will list 4 options for the manager to choose from
 function askManager() {
+    console.log("\n");
+
     inquirer.prompt([
         {
             type: "list",
@@ -56,6 +58,8 @@ function askManager() {
 
 // Function that will ask the manager if they would like to perform another action
 function afterAction() {
+    console.log("\n");
+
     inquirer.prompt([
         {
             type: "list",
@@ -98,7 +102,11 @@ function lowInventory() {
 
         console.log("\n");
 
-        console.table(result);
+        if (result.length > 0) {
+            console.table(result);
+        } else {
+            console.log("There are no items in the store that are low on inventory.");
+        }
 
         afterAction();
     })
@@ -106,6 +114,8 @@ function lowInventory() {
 
 // Function that will allow the manager to add stock quantity to existing items in the database
 function addInventory() {
+    console.log("\n");
+
     // Get the item's ID & the quantity that they would like to add by
     inquirer.prompt([
         {
@@ -134,7 +144,10 @@ function addInventory() {
     })
 }
 
+// Function that will allow the manager to add a completely new item into the database
 function newProduct() {
+    console.log("\n");
+
     inquirer.prompt([
         {
             type: "input",
@@ -157,6 +170,19 @@ function newProduct() {
             name: "item_quantity"
         }
     ]).then(function (response) {
-        
+        var query = connection.query(
+            "INSERT INTO products SET ?",
+            {
+                product_name: response.item_name,
+                department_name: response.item_department,
+                price: response.item_price,
+                stock_quantity: response.item_quantity
+            },
+            function (error, response) {
+                if (error) throw error;
+
+                viewProducts();
+            }
+        )
     })
 }
